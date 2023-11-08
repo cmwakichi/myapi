@@ -8,4 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+
+        'body' => 'array',
+    ];
+
+    public function Comments(){
+
+        return $this->hasMany(Comment::class, 'post_id');
+
+    }
+
+    public function users(){
+        return $this->belongsToMany(User::class, 'post_user', 'post_id', 'user_id');
+    }
 }
