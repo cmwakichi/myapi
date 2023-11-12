@@ -15,9 +15,11 @@ class UserController extends Controller
      */
     public function index()
     {
+        $users = User::query()->get();
+
         return new \Illuminate\Http\JsonResponse(
             [
-                'data' => 'testdata'
+                'data' => $users
             ]
         );
     }
@@ -30,8 +32,14 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $created = User::query()->create([
+            'name'=>$request->name,
+            'email'=>$request->email,
+            'password'=>$request->password,
+        ]);
+
         return new \Illuminate\Http\JsonResponse([
-            'user' => 'posted'
+            'user' => $created
         ]);
     }
 
@@ -57,8 +65,22 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        $updated = $user->update([
+            'name'=>$request->name ?? $user->name,
+            'email'=>$request->email ?? $user->email,
+            'password'=>$request->password ?? $user->password,
+        ]);
+
+        if(!$updated){
+            return new JsonResponse([
+                'errors'=>[
+                    'Update failed.'
+                ]
+                ],400);
+        }
+
         return new \Illuminate\Http\JsonResponse([
-            'data' => 'updated'
+            'data' => $user
         ]);
     }
 
@@ -70,8 +92,18 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $id = $user->id;
+        $deleted = $user->delete();
+
+        if(!$deleted){
+            return new JsonResponse([
+                'errors'=>[
+                    'Failed to delete user.'
+                ]
+                ],400);
+        }
         return new \Illuminate\Http\JsonResponse([
-            'data' => 'deleted'
+            'data' => 'user with id:'.$id. ' deleted'
         ]);
     }
 }

@@ -16,8 +16,10 @@ class PostController extends Controller
      */
     public function index()
     {
+        $posts = Post::query()->get();
+
         return new JsonResponse([
-            'data'=>'posts all'
+            'posts'=>$posts
         ]);
     }
 
@@ -29,8 +31,13 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $created = Post::query()->create([
+            'title' => $request->title,
+            'body' => $request->body,
+        ]);
+
         return new JsonResponse([
-            'data'=>'created'
+            'post'=>$created
         ]);
     }
 
@@ -56,8 +63,21 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        $updated = $post->update([
+            'title' => $request->title ?? $post->title,
+            'body' => $request->body ?? $post->body,
+        ]);
+
+        if(!$updated){
+            return new JsonResponse([
+                'errors'=>[
+                    'Failed to update post.'
+                ]
+            ],400);
+        }
+
         return new JsonResponse([
-            'data'=>'updated'
+            'post' => $post
         ]);
     }
 
@@ -69,8 +89,17 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        $deleted = $post->delete();
+
+        if(!$deleted){
+            return new JsonResponse([
+                'errors'=>[
+                    'Failed to remove post.'
+                ]
+                ],400);
+        }
         return new JsonResponse([
-            'data'=>'deleted'
+            'data'=>'post deleted'
         ]);
     }
 }

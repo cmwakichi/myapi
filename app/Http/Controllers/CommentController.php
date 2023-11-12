@@ -15,8 +15,10 @@ class CommentController extends Controller
      */
     public function index()
     {
+        $comments = Comment::query()->get();
+
         return new JsonResponse([
-            'data'=>'all comments'
+            'data'=>$comments
         ]);
     }
 
@@ -28,9 +30,15 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        return new JsonResponse(
-            300
-        );
+        $created = Comment::query()->create([
+            'body'=>$request->body,
+            'user_id'=>$request->user_id,
+            'post_id'=>$request->post_id,
+        ]);
+
+        return new JsonResponse([
+            'data'=>$created
+        ]);
     }
 
     /**
@@ -55,8 +63,20 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
+        $updated = $comment->update([
+            'body'=>$request->body ?? $comment->body,
+            'user_id'=>$request->user_id ?? $comment->user_id,
+            'post_id'=>$request->post_id ?? $comment->post_id,
+        ]);
+
+        if(!$updated){
+            return new JsonResponse([
+                'errors'=>['Failed to update.']
+            ],400);
+        }
+
         return new JsonResponse([
-            'data'=>'updated'
+            'data'=>$comment
         ]);
     }
 
@@ -68,6 +88,13 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
+        $deleted = $comment->delete();
+
+        if(!$deleted){
+            return new JsonResponse([
+                'error'=>['Failed to delete the comment.']
+            ], 400);
+        }
         return new JsonResponse([
             'data'=>'deleted'
         ]);
