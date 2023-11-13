@@ -25,7 +25,7 @@ class PostSeeder extends Seeder
 
         $this->truncate('posts');
 
-        $posts = Post::factory(3)
+        $posts = Post::factory(100)
         ->create();
 
         $posts->each(function(Post $post){
