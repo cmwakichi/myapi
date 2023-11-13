@@ -5,21 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Resources\CommentResource;
 
 class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return CommentResource
      */
     public function index()
     {
         $comments = Comment::query()->get();
 
-        return new JsonResponse([
-            'data'=>$comments
-        ]);
+        return CommentResource::collection($comments);
     }
 
     /**
@@ -30,15 +29,13 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        $created = Comment::query()->create([
+        $comment = Comment::query()->create([
             'body'=>$request->body,
             'user_id'=>$request->user_id,
             'post_id'=>$request->post_id,
         ]);
 
-        return new JsonResponse([
-            'data'=>$created
-        ]);
+        return new CommentResource($comment);
     }
 
     /**
@@ -49,9 +46,7 @@ class CommentController extends Controller
      */
     public function show(Comment $comment)
     {
-        return new JsonResponse([
-            'data'=>$comment
-        ]);
+        return new CommentResource($comment);
     }
 
     /**
@@ -59,7 +54,7 @@ class CommentController extends Controller
      *
      * @param  \App\Http\Request $request
      * @param  \App\Models\Comment $comment
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse | CommentResource
      */
     public function update(Request $request, Comment $comment)
     {
@@ -75,9 +70,7 @@ class CommentController extends Controller
             ],400);
         }
 
-        return new JsonResponse([
-            'data'=>$comment
-        ]);
+        return new CommentResource($comment);
     }
 
     /**

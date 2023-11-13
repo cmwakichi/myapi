@@ -5,55 +5,48 @@ namespace App\Http\Controllers;
 use App\Models\User;
 //use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse;
+     * @return UserResource;
      */
     public function index()
     {
         $users = User::query()->get();
 
-        return new \Illuminate\Http\JsonResponse(
-            [
-                'data' => $users
-            ]
-        );
+        return UserResource::collection($users);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return UserResource
      */
     public function store(Request $request)
     {
-        $created = User::query()->create([
+        $user = User::query()->create([
             'name'=>$request->name,
             'email'=>$request->email,
             'password'=>$request->password,
         ]);
 
-        return new \Illuminate\Http\JsonResponse([
-            'user' => $created
-        ]);
+        return new UserResource($user);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  \App\Models\User $user
-     * @return \Illuminate\Http\JsonResponse
+     * @return UserResource
      */
     public function show(User $user)
     {
-        return new \Illuminate\Http\JsonResponse([
-            'user' => $user
-        ]);
+        return new UserResource($user);
     }
 
     /**
@@ -61,7 +54,7 @@ class UserController extends Controller
      *
      * @param  \App\Http\Request $request
      * @param  \App\Models\User $user
-     * @return \Illuminate\Http\JsonResponse
+     * @return UserResource | UserResource
      */
     public function update(Request $request, User $user)
     {
@@ -79,9 +72,7 @@ class UserController extends Controller
                 ],400);
         }
 
-        return new \Illuminate\Http\JsonResponse([
-            'data' => $user
-        ]);
+        return new UserResource($user);
     }
 
     /**
