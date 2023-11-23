@@ -6,6 +6,8 @@ use App\Models\User;
 //use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Hash;
+use App\Events\Models\User\UserCreated;
 
 class UserController extends Controller
 {
@@ -16,6 +18,8 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        //event(new UserCreated(User::factory(App\User::class)->make()));
+
         $pageSize = $request->page_size ?? 20;
 
         $users = User::query()->paginate($pageSize);
@@ -31,11 +35,15 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $user = User::query()->create([
+
+        $user = User::create([
             'name'=>$request->name,
             'email'=>$request->email,
-            'password'=>$request->password,
-        ]);
+            'password'=>Hash::make($request->password),
+        ]
+        );
+
+        event(new UserCreated($user));
 
         return new UserResource($user);
     }
@@ -74,6 +82,8 @@ class UserController extends Controller
                 ],400);
         }
 
+        event(new UserUpdated($updated));
+
         return new UserResource($user);
     }
 
@@ -95,6 +105,9 @@ class UserController extends Controller
                 ]
                 ],400);
         }
+
+        event(new UserDeleted($deleted));
+
         return new \Illuminate\Http\JsonResponse([
             'data' => 'user with id:'.$id. ' deleted'
         ]);

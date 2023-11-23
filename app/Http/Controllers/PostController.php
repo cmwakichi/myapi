@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Events\Models\Post\PostCreated;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PostResource;
+use App\Repositories\PostRepository;
 use App\Http\Requests\UpdatePostRequest;
 
 class PostController extends Controller
@@ -17,6 +20,8 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
+        event(new PostCreated(Post::factory(App\Post::class)->make()));
+
         $pageSize = $request->page_size ?? 20;
 
         $posts = Post::query()->paginate($pageSize);
@@ -30,12 +35,13 @@ class PostController extends Controller
      * @param  \App\Http\Request  $request
      * @return PostResource
      */
-    public function store(Request $request)
+    public function store(Request $request, PostRepository $repository)
     {
-        $post = Post::query()->create([
-            'title' => $request->title,
-            'body' => $request->body,
-        ]);
+        $post = $repository->create($request->only([
+            'title',
+            'body',
+            'user_ids',
+        ]));
 
         return new PostResource($post);
     }
@@ -58,20 +64,15 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, Post $post, PostRepository $repository)
     {
-        $updated = $post->update([
-            'title' => $request->title ?? $post->title,
-            'body' => $request->body ?? $post->body,
-        ]);
-
-        if(!$updated){
-            return new JsonResponse([
-                'errors'=>[
-                    'Failed to update post.'
-                ]
-            ],400);
-        }
+        $post = $repository->update($post,
+            $request->only([
+                'title',
+                'body',
+                'user_ids'
+            ])
+        );
 
         return new PostResource($post);
     }
@@ -82,17 +83,10 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Post $post)
+    public function destroy(Post $post, PostRepository $repository)
     {
-        $deleted = $post->delete();
+        $repository->forceDelete($post);
 
-        if(!$deleted){
-            return new JsonResponse([
-                'errors'=>[
-                    'Failed to remove post.'
-                ]
-                ],400);
-        }
         return new JsonResponse([
             'data'=>'post deleted'
         ]);
