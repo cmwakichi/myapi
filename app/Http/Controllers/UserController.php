@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\User;
 //use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Resources\UserResource;
+use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use App\Events\Models\User\UserCreated;
+use App\Events\Models\User\UserUpdated;
+use App\Exceptions\GeneralJsonException;
 
 class UserController extends Controller
 {
@@ -33,17 +37,16 @@ class UserController extends Controller
      * @param  \App\Http\Request $request
      * @return UserResource
      */
-    public function store(Request $request)
+    public function store(Request $request, UserRepository $repository)
     {
 
-        $user = User::create([
-            'name'=>$request->name,
-            'email'=>$request->email,
-            'password'=>Hash::make($request->password),
-        ]
-        );
+        $user = $repository->create($request->only([
+            'name',
+            'email',
+            'password',
+        ]));
 
-        event(new UserCreated($user));
+        //event(new UserCreated($user));
 
         return new UserResource($user);
     }
@@ -66,23 +69,14 @@ class UserController extends Controller
      * @param  \App\Models\User $user
      * @return UserResource | UserResource
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user, UserRepository $repository)
     {
-        $updated = $user->update([
-            'name'=>$request->name ?? $user->name,
-            'email'=>$request->email ?? $user->email,
-            'password'=>$request->password ?? $user->password,
-        ]);
+        $updated = $repository->update($user, $request->only([
+            'name',
+            'email',
+        ]));
 
-        if(!$updated){
-            return new JsonResponse([
-                'errors'=>[
-                    'Update failed.'
-                ]
-                ],400);
-        }
-
-        event(new UserUpdated($updated));
+        //event(new UserUpdated($user));
 
         return new UserResource($user);
     }
@@ -93,23 +87,13 @@ class UserController extends Controller
      * @param  \App\Models\User $user
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(User $user)
+    public function destroy(User $user, UserRepository $repository)
     {
-        $id = $user->id;
-        $deleted = $user->delete();
+        $deleted = $repository->destroy($user);
 
-        if(!$deleted){
-            return new JsonResponse([
-                'errors'=>[
-                    'Failed to delete user.'
-                ]
-                ],400);
-        }
-
-        event(new UserDeleted($deleted));
-
-        return new \Illuminate\Http\JsonResponse([
-            'data' => 'user with id:'.$id. ' deleted'
+        return new JsonResponse([
+            'message'=>'Success.'
         ]);
+
     }
 }

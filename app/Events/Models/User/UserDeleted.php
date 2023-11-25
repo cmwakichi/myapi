@@ -15,7 +15,7 @@ class UserDeleted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    protected $user;
+    public $user;
 
     /**
      * Create a new event instance.

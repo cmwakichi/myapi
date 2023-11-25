@@ -7,14 +7,16 @@ use Illuminate\Http\Request;
 
 class GeneralJsonException extends Exception
 {
-    public function report(){}
+    protected $code = 422;
+
+    //public function report(){}
 
     public function render($request)
     {
         return new JsonResponse([
-            'error'=>[
-                'message'=>$this->getMessage()
+            'errors'=>[
+                'message'=>$this->getMessage(),
             ],
-            $this->getCode()]);
+            $this->code()]);
     }
 }

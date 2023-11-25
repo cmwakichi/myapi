@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Events\Models\Post\PostCreated;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PostResource;
 use App\Repositories\PostRepository;
+use App\Events\Models\Post\PostCreated;
+use App\Http\Requests\PostStoreRequest;
 use App\Http\Requests\UpdatePostRequest;
 
 class PostController extends Controller
@@ -32,10 +33,10 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Request  $request
+     * @param  PostStoreRequest  $request
      * @return PostResource
      */
-    public function store(Request $request, PostRepository $repository)
+    public function store(PostStoreRequest $request, PostRepository $repository)
     {
         $post = $repository->create($request->only([
             'title',

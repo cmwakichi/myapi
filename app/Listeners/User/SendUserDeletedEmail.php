@@ -20,11 +20,11 @@ class SendUserDeletedEmail
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param  UserDeleted  $event
      * @return void
      */
     public function handle($event)
     {
-        echo('User deleted');
+        //
     }
 }

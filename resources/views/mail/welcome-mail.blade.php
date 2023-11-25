@@ -2,5 +2,5 @@
     # Welcome {{ $name }}!!
 
     Thanks,
-    Livepost api test.
+    {{ config('app.name') }}.
 @endcomponent
