@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Comment;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UserUpdatedMail extends Mailable
+class CommentUpdatedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -31,6 +31,6 @@ class UserUpdatedMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Update details')->markdown('mail.updated-mail');
+        return $this->subject('Comment modified.')->markdown('mail.comment.comment-updated');
     }
 }

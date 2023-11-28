@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UserUpdatedMail extends Mailable
+class PostCreatedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -31,6 +31,6 @@ class UserUpdatedMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Update details')->markdown('mail.updated-mail');
+        return $this->subject('New User Added.')->markdown('mail.post.postcreated');
     }
 }

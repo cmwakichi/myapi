@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Events\Models\Post\PostCreated;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PostResource;
 use App\Repositories\PostRepository;
-use App\Events\Models\Post\PostCreated;
 use App\Http\Requests\PostStoreRequest;
 use App\Http\Requests\UpdatePostRequest;
 
@@ -43,6 +44,10 @@ class PostController extends Controller
             'body',
             'user_ids',
         ]));
+        dump($post);
+        $user = User::find($request->user_id);
+
+        event(new PostCreated($user));
 
         return new PostResource($post);
     }

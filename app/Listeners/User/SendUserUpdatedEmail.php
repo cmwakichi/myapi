@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Listeners\User;
 
 use App\Mail\UserUpdatedMail;
 use Illuminate\Support\Facades\Mail;
@@ -30,6 +30,7 @@ class SendUserUpdatedEmail
     {
         $user = $event->user;
 
-        Mail::to($user)->send(new UserUpdatedMail($user));
+        Mail::to($user)
+            ->send(new UserUpdatedMail($user));
     }
 }

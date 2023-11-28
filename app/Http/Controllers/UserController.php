@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-//use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use App\Events\Models\User\UserCreated;
+use App\Events\Models\User\UserDeleted;
 use App\Events\Models\User\UserUpdated;
 use App\Exceptions\GeneralJsonException;
 
@@ -46,7 +46,7 @@ class UserController extends Controller
             'password',
         ]));
 
-        //event(new UserCreated($user));
+        event(new UserCreated($user));
 
         return new UserResource($user);
     }
@@ -76,7 +76,7 @@ class UserController extends Controller
             'email',
         ]));
 
-        //event(new UserUpdated($user));
+        event(new UserUpdated($user));
 
         return new UserResource($user);
     }
@@ -90,6 +90,8 @@ class UserController extends Controller
     public function destroy(User $user, UserRepository $repository)
     {
         $deleted = $repository->destroy($user);
+
+        event(new UserDeleted($user));
 
         return new JsonResponse([
             'message'=>'Success.'

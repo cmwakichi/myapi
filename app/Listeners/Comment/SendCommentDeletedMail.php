@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Listeners\Post;
+namespace App\Listeners\Comment;
 
-use App\Mail\PostCreatedMail;
-use App\Events\Models\Post\PostCreated;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\Comment\CommentDeletedMail;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Events\Models\Comment\CommentDeleted;
 
-class SendPostCreatedEmail
+class SendCommentDeletedMail
 {
     /**
      * Create the event listener.
@@ -23,13 +23,13 @@ class SendPostCreatedEmail
     /**
      * Handle the event.
      *
-     * @param  PostCreated $event
+     * @param  CommentDeleted $event
      * @return void
      */
     public function handle($event)
     {
         $user = $event->user;
 
-        Mail::to($user)->send(new PostCreatedMail($user));
+        Mail::to($user)->send(new CommentDeletedMail($user));
     }
 }

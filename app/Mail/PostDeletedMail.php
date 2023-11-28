@@ -2,26 +2,23 @@
 
 namespace App\Mail;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UserUpdatedMail extends Mailable
+class PostDeletedMail extends Mailable
 {
     use Queueable, SerializesModels;
-
-    private $user;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct()
     {
-        $this->user = $user;
+        //
     }
 
     /**
@@ -31,6 +28,6 @@ class UserUpdatedMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Update details')->markdown('mail.updated-mail');
+        return $this->view('view.name');
     }
 }

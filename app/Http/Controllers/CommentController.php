@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\CommentResource;
 use App\Repositories\CommentRepository;
+use App\Events\Models\Comment\CommentCreated;
+use App\Events\Models\Comment\CommentDeleted;
+use App\Events\Models\Comment\CommentUpdated;
 
 class CommentController extends Controller
 {
@@ -38,6 +42,10 @@ class CommentController extends Controller
             'user_id',
         ]));
 
+        $user = User::find($request->user_id);
+
+        event(new CommentCreated($user));
+
         return new CommentResource($comment);
     }
 
@@ -65,6 +73,12 @@ class CommentController extends Controller
             'body',
         ]));
 
+        $id = $comment->user->id;
+
+        $user = User::find($id);
+
+        event(new CommentUpdated($user));
+
         return new CommentResource($comment);
     }
 
@@ -76,7 +90,11 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment, CommentRepository $repository)
     {
+        $user_id = $comment->user->id;
+
         $repository->destroy($comment);
+
+        event(new CommentDeleted(User::find($user_id)));
 
         return new JsonResponse([
             'message'=>'deleted'

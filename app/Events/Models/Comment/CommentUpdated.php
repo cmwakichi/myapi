@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events\Models\Post;
+namespace App\Events\Models\Comment;
 
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
@@ -11,11 +11,11 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class PostCreated
+class CommentUpdated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    protected $user;
+    public $user;
 
     /**
      * Create a new event instance.
