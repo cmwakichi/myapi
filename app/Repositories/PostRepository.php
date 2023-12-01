@@ -5,6 +5,7 @@ namespace App\Repositories;
 use Exception;
 use App\Models\Post;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\GeneralJsonException;
 //use App\Repositories\BaseRepository;
 
 class PostRepository{
@@ -45,10 +46,7 @@ class PostRepository{
                 'body' => data_get($attributes, 'body', $post->body),
             ]);
 
-            if(!$updated)
-            {
-                throw new Exception("Failed to update post.");
-            }
+            throw_if(!$updated, GeneralJsonException::class, 'Failed to update post.');
 
             if($userIds = data_get($attributes, 'user_ids'))
             {

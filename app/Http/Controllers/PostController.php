@@ -44,10 +44,8 @@ class PostController extends Controller
             'body',
             'user_ids',
         ]));
-        dump($post);
-        $user = User::find($request->user_id);
 
-        event(new PostCreated($user));
+        //event(new PostCreated($user));
 
         return new PostResource($post);
     }
@@ -55,7 +53,7 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Post  $post
+     * @param  \App\Models\Post $post
      * @return PostResource
      */
     public function show(Post $post)

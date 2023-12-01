@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\CommentResource;
 use App\Repositories\CommentRepository;
+use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\UpdateCommentRequest;
 use App\Events\Models\Comment\CommentCreated;
 use App\Events\Models\Comment\CommentDeleted;
 use App\Events\Models\Comment\CommentUpdated;
@@ -34,7 +36,7 @@ class CommentController extends Controller
      * @param  \App\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request, CommentRepository $repository)
+    public function store(StoreCommentRequest $request, CommentRepository $repository)
     {
         $comment = $repository->create($request->only([
             'body',
@@ -67,7 +69,7 @@ class CommentController extends Controller
      * @param  \App\Models\Comment $comment
      * @return \Illuminate\Http\JsonResponse | CommentResource
      */
-    public function update(Request $request, Comment $comment, CommentRepository $repository)
+    public function update(UpdateCommentRequest $request, Comment $comment, CommentRepository $repository)
     {
         $comment = $repository->update($comment, $request->only([
             'body',

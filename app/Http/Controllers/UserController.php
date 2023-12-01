@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Hash;
 use App\Events\Models\User\UserCreated;
 use App\Events\Models\User\UserDeleted;
 use App\Events\Models\User\UserUpdated;
+use App\Http\Requests\UserStoreRequest;
 use App\Exceptions\GeneralJsonException;
+use App\Http\Requests\UserUpdateRequest;
 
 class UserController extends Controller
 {
@@ -37,7 +39,7 @@ class UserController extends Controller
      * @param  \App\Http\Request $request
      * @return UserResource
      */
-    public function store(Request $request, UserRepository $repository)
+    public function store(UserStoreRequest $request, UserRepository $repository)
     {
 
         $user = $repository->create($request->only([
@@ -69,7 +71,7 @@ class UserController extends Controller
      * @param  \App\Models\User $user
      * @return UserResource | UserResource
      */
-    public function update(Request $request, User $user, UserRepository $repository)
+    public function update(UserUpdateRequest $request, User $user, UserRepository $repository)
     {
         $updated = $repository->update($user, $request->only([
             'name',
